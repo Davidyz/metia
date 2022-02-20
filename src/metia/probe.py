@@ -20,11 +20,8 @@ class Probe:
         if not os.path.isfile(path):
             raise FileNotFoundError("File not found: {}".format(path))
         self.__path = path
-        command = '{} -v quiet -hide_banner -print_format json -show_format -show_streams "{}"'.format(
-            FFPROBE_COMMAND, self.__path
-        )
-        output = subprocess.check_output(command, shell=True)
-        self.__meta = json.loads(output.decode(encoding))
+        self.__meta = {}
+        self._init(encoding)
 
     def __hash__(self):
         return hash(str(self))
@@ -44,6 +41,23 @@ class Probe:
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def dict(self):
+        """
+        Return the dict returned by the json parser.
+        """
+        return self.__meta.copy()
+
+    def _init(self, encoding="utf8"):
+        command = '{} -v quiet -hide_banner -print_format json -show_format -show_streams "{}"'.format(
+            FFPROBE_COMMAND, self.__path
+        )
+        output = subprocess.check_output(command, shell=True)
+        self.__meta = json.loads(output.decode(encoding))
+
+    def get_tags(self) -> Optional[Dict[str, str]]:
+        if self.__meta.get("format") and self.__meta["format"].get("tags"):
+            return self.__meta["format"]["tags"]
 
     @property
     def path(self):
@@ -87,7 +101,7 @@ class Probe:
                 except KeyError:
                     continue
 
-        if bitrates == {}:
+        if bitrates == {} and self.video_codec() != {}:
             return self.__bitrate()
         return bitrates
 
@@ -104,7 +118,7 @@ class Probe:
                     bitrates[stream["index"]] = int(stream["bit_rate"])
                 except KeyError:
                     continue
-        if bitrates == {} and self.video_codec() != None:
+        if bitrates == {} and self.video_codec() != {}:
             return self.__bitrate()
         return bitrates
 
