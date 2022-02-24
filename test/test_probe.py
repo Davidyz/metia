@@ -33,14 +33,16 @@ class TestProbe(unittest.TestCase):
         self.assertEqual(clip.audio_codec(), {})
 
     def test_audio_codec(self):
-        pass
+        song = probe.Probe("./test/media_files/Canon Rock.mp3")
+        self.assertEqual(song.audio_codec(), {0: "mp3"})
 
     def test_video_codec(self):
         clip = probe.Probe("./test/media_files/no_audio.mp4")
         self.assertEqual(clip.video_codec(), {0: "h264"})
 
     def test_audio_bitrate(self):
-        pass
+        song = probe.Probe("./test/media_files/Canon Rock.mp3")
+        self.assertEqual(song.audio_bitrate(), {0: 320000})
 
     def test_video_bitrate(self):
         clip = probe.Probe("./test/media_files/no_audio.mp4")
