@@ -1,9 +1,10 @@
 import subprocess
 import re
+from typing import Iterator
 from . import writter
 
 
-def get_decoders():
+def get_decoders() -> Iterator[str]:
     command = f"{writter.FFMPEG_COMMAND} -hide_banner -decoders"
     output = (
         subprocess.run(command.split(" "), capture_output=True)
@@ -20,7 +21,7 @@ def get_decoders():
         yield match_result.groups()[0]
 
 
-def get_encoders():
+def get_encoders() -> Iterator[str]:
     command = f"{writter.FFMPEG_COMMAND} -hide_banner -encoders"
     output = (
         subprocess.run(command.split(" "), capture_output=True)

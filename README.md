@@ -28,6 +28,8 @@ and codec.
 Some methods of this class may be helpful to video files too.
 
 ### `metia.writter.Media`
+>> WORK IN PROGRESS
+
 This class, apart from reading the metadata, allows you to alter the metadata,
 including changing the tags of the media file and adding a cover art to it.
 

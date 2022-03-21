@@ -113,25 +113,17 @@ class Media:
             os.system(f'mv /tmp/{random_name} "{self.__probe.path}"')
 
     def write_song_tags(self):
-        command = f'{FFMPEG_COMMAND} -i "{self.path}" -map 0 -c copy'
+        command = f'{FFMPEG_COMMAND} -hide_banner -loglevel 0 -i "{self.path}" -map 0 -c copy'
         for key in self.__SONG_TAGS:
             value = self.get_tags().get(key.upper())
             if isinstance(value, str):
-                command += f' -metadata {key}="{value}"'
+                command += " -metadata {key}={value} ".format(
+                    key=key, value=value.replace(" ", "\\ ")
+                )
         random_name = str(uuid.uuid4()) + "." + self.__suffix
         command += f" /tmp/{random_name}"
         os.system(command)
         os.system(f'mv /tmp/{random_name} "{self.path}"')
-
-    def transcode(
-        self,
-        target: str = None,
-        audio_bitrate: Union[str, int] = None,
-        video_bitrate: Union[str, int] = None,
-        audio_codec: str = None,
-        video_codec: str = None,
-    ):
-        pass
 
 
 if __name__ == "__main__":

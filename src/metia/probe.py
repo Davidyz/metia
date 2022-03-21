@@ -87,7 +87,7 @@ class Probe:
                 codecs[stream["index"]] = stream["codec_name"]
         return codecs
 
-    def audio_bitrate(self) -> Union[Optional[int], Dict[int, str]]:
+    def audio_bitrates(self) -> Union[Optional[int], Dict[int, str]]:
         """
         Return a dictionary of audio bitrates.
         key: index of stream
@@ -105,7 +105,7 @@ class Probe:
             return self.__bitrate()
         return bitrates
 
-    def video_bitrate(self) -> Union[Optional[int], Dict[int, str]]:
+    def video_bitrates(self) -> Dict[int, int]:
         """
         Return a dictionary of video bitrates.
         key: index of stream
@@ -118,8 +118,12 @@ class Probe:
                     bitrates[stream["index"]] = int(stream["bit_rate"])
                 except KeyError:
                     continue
-        if bitrates == {} and self.video_codec() != {}:
-            return self.__bitrate()
+        if (
+            bitrates == {}
+            and self.video_codec() != {}
+            and isinstance(self.__bitrate(), int)
+        ):
+            return {0: self.__bitrate()}
         return bitrates
 
     def __bitrate(self) -> Optional[int]:
@@ -128,6 +132,15 @@ class Probe:
             and self.__meta["format"].get("bit_rate") != None
         ):
             return int(self.__meta["format"]["bit_rate"])
+
+    def video_bitrate_sum(self) -> Optional[int]:
+        """
+        Return the sum of the bitrates of all video streams.
+        """
+        if isinstance(self.video_bitrates(), int):
+            return int(self.video_bitrates())
+        elif isinstance(self.video_bitrates(), dict):
+            return sum(value for key, value in dict(self.video_bitrates()))
 
 
 if __name__ == "__main__":
