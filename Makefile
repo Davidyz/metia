@@ -1,11 +1,11 @@
 build_package:
-	@if [ -d dist ] ; then rm dist/* ; fi;
+	@if [ -d dist ] ; then rm dist/* -rf; fi;
 	@echo Installing build dependencies.
 	@[ -f ./requirements_dev.txt ] && pip install -U -r requirements_dev.txt
 	@make run_test && python -m build || echo Some tests are not passed. Aborting.
 
 publish:
-	@make build
+	@make build_package
 	@python -m twine upload --repository pypi dist/*
 	@rm dist/*
 
