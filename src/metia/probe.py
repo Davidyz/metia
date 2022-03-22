@@ -59,6 +59,12 @@ class Probe:
         if self.__meta.get("format") and self.__meta["format"].get("tags"):
             return self.__meta["format"]["tags"]
 
+    def get_tag(self, key: str) -> Optional[str]:
+        if self.__meta.get("format") and self.__meta["format"].get("tags"):
+            return self.__meta["format"]["tags"].get(
+                key.upper()
+            ) or self.__meta["format"]["tags"].get(key.lower())
+
     @property
     def path(self):
         return os.path.realpath(self.__path)

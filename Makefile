@@ -1,5 +1,5 @@
 build_package:
-	@[ -d dist ] && rm dist/*
+	@if [ -d dist ] ; then rm dist/* ; fi;
 	@echo Installing build dependencies.
 	@[ -f ./requirements_dev.txt ] && pip install -U -r requirements_dev.txt
 	@make run_test && python -m build || echo Some tests are not passed. Aborting.

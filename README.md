@@ -42,6 +42,10 @@ want and use `os.system` (or other equivalent) to invoke a `ffmpeg` command.
 Alternatively, you may look for other more powerful ffmpeg wrappers that has
 support for more ffmpeg features, but that is beyond the scope of this project.
 
+### Command Line Interface
+This tool provides command-line interface for convenience.
+
+* `metia-probe`: print the media info in a nicer (less messy) format
 
 ## Development
 This library is hosted on this [Github repository][repo_url]. Visit to

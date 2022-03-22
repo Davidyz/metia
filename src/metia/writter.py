@@ -89,6 +89,9 @@ class Media:
     def get_tags(self) -> Dict[str, str]:
         return self.__probe.get_tags() or {}
 
+    def get_tag(self, key: str) -> Optional[str]:
+        return self.__probe.get_tag(key)
+
     def set_tag(self, key: str, value: str, encoding="utf8") -> None:
         self.__tags[key.upper() if key in self.__SONG_TAGS else key] = value
 

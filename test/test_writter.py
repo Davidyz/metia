@@ -52,7 +52,7 @@ class TestWritter(unittest.TestCase):
         new_probe = metia.probe.Probe(self.original_file)
         self.assertIsInstance(new_probe.get_tags(), dict)
         if isinstance(new_probe.get_tags(), dict):
-            self.assertEqual(new_probe.get_tags().get("title"), "Canon Rock")
+            self.assertEqual(new_probe.get_tag("title"), "Canon Rock")
 
 
 if __name__ == "__main__":
