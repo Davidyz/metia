@@ -16,6 +16,9 @@ __INDENT_STRING = "  "
 
 def pprint_list(info: List, indentation: int = 0) -> None:
     indent_str = indentation * __INDENT_STRING
+    if all(isinstance(i, str) for i in info):
+        info.sort()
+
     for i in info:
         if isinstance(i, list):
             pprint_list(i, indentation + 1)
@@ -39,7 +42,7 @@ def pprint_dict(
             pprint_dict(value, indentation + 1)
         elif isinstance(value, list):
             print(f"{indent_str}{key}:")
-            pprint_list(sorted(value), indentation + 1)
+            pprint_list(value, indentation + 1)
         else:
             print(f"{indent_str}{key}: {value}")
 
