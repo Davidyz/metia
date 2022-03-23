@@ -1,5 +1,6 @@
 import os
 import uuid
+import shutil
 from typing import Dict, Optional, Union
 
 from . import probe
@@ -80,9 +81,10 @@ class Media:
 
         try:
             probe.Probe(path)
-            os.system(f'cp "{path}" "{song_dir}"')
-        except Exception:
-            return False
+            shutil.copy(path, song_dir)
+        except Exception as e:
+            if not isinstance(e, shutil.SameFileError):
+                return False
 
         return isinstance(self.__cover, str)
 
@@ -111,9 +113,12 @@ class Media:
             # the file already has a cover art
             return
         random_name = str(uuid.uuid4()) + "." + self.__suffix
-        command = f'{FFMPEG_COMMAND} -i "{self.__probe.path}" -i "{self.__cover}" -loglevel 0 -hide_banner -map 0:0 -map 1:0 -c copy -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (front)" -disposition:v attached_pic /tmp/{random_name}'
+        while random_name in os.listdir():
+            random_name = str(uuid.uuid4()) + "." + self.__suffix
+        command = f'{FFMPEG_COMMAND} -i "{self.__probe.path}" -i "{self.__cover}" -loglevel 0 -hide_banner -map 0:0 -map 1:0 -c copy -metadata:s:v title="Album cover" -metadata:s:v comment="Cover (front)" -disposition:v attached_pic {random_name}'
         if os.system(command) == 0:
-            os.system(f'mv /tmp/{random_name} "{self.__probe.path}"')
+            shutil.move(random_name, self.path)
+            self.__probe._init()
 
     def write_song_tags(self):
         command = f'{FFMPEG_COMMAND} -hide_banner -loglevel 0 -i "{self.path}" -map 0 -c copy'
@@ -123,10 +128,15 @@ class Media:
                 command += " -metadata {key}={value} ".format(
                     key=key, value=value.replace(" ", "\\ ")
                 )
+
         random_name = str(uuid.uuid4()) + "." + self.__suffix
-        command += f" /tmp/{random_name}"
-        os.system(command)
-        os.system(f'mv /tmp/{random_name} "{self.path}"')
+        while random_name in os.listdir():
+            random_name = str(uuid.uuid4()) + "." + self.__suffix
+
+        command += f" {random_name}"
+        if os.system(command) == 0:
+            shutil.move(random_name, self.path)
+            self.__probe._init()
 
 
 if __name__ == "__main__":
