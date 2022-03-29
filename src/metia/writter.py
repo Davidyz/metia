@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 import shutil
 from typing import Dict, Optional, Union
@@ -125,7 +126,7 @@ class Media:
         for key in self.__SONG_TAGS:
             value = self.get_tags().get(key.upper())
             if isinstance(value, str):
-                command += " -metadata {key}={value} ".format(
+                command += ' -metadata {key}="{value}" '.format(
                     key=key, value=value.replace(" ", "\\ ")
                 )
 
@@ -137,6 +138,36 @@ class Media:
         if os.system(command) == 0:
             shutil.move(random_name, self.path)
             self.__probe._init()
+
+    def trim(
+        self,
+        output: str,
+        start: str = "0:00:00",
+        end: Optional[str] = None,
+        duration: Optional[str] = None,
+    ):
+        time_pattern = re.compile(r"\d{1,2}(:\d\d){0,2}")
+        if time_pattern.match(start) is None:
+            raise ValueError("Please provide valid end/duration value.")
+
+        command = f"{FFMPEG_COMMAND} -hide_banner -loglevel 0 -ss {start} "
+        if (
+            end is None
+            and isinstance(duration, str)
+            and time_pattern.match(duration) != None
+        ):
+            command += f"-t {duration} "
+        elif (
+            duration is None
+            and isinstance(end, str)
+            and time_pattern.match(end) != None
+        ):
+            command += f"-to {end} "
+        else:
+            raise ValueError("Please provide valid end/duration value.")
+        command += f"-i {self.path} -c copy -map 0 -map_metadata 0 {output}"
+        if os.system(command) != 0:
+            raise IOError("Failed to convert.")
 
 
 if __name__ == "__main__":
