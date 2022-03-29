@@ -14,6 +14,10 @@ except (AttributeError, ImportError):
 __INDENT_STRING = "  "
 
 
+def text_length(text: str, encoding="utf8") -> int:
+    return sum(len(i.encode(encoding=encoding)) for i in text) if text else 0
+
+
 def pprint_list(info: List, indentation: int = 0) -> None:
     indent_str = indentation * __INDENT_STRING
     if all(isinstance(i, str) for i in info):
@@ -52,7 +56,7 @@ def print_media(media: Probe, key) -> int:
     Driver function for pprint()
     """
     print(media.path)
-    print(len(media.path) * "=")
+    print(text_length(media.path) * "=")
     if key is None:
         pprint_dict(media.dict())
     else:
@@ -120,8 +124,18 @@ def metia_probe():
         print("Usage: media-probe [PATH_TO_MEDIA] [key]")
         sys.exit(1)
     if not os.path.isfile(path):
+        if os.path.isdir(path):
+            path = os.listdir(path)
         print(f"Not a valid path: {path}")
         sys.exit(1)
 
-    meta = Probe(path)
-    sys.exit(print_media(meta, key))
+    if isinstance(path, list):
+        for item in path:
+            try:
+                meta = Probe(path)
+                print_media(meta, key)
+            except Exception:
+                pass
+    else:
+        meta = Probe(path)
+        sys.exit(print_media(meta, key))

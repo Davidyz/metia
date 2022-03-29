@@ -146,7 +146,7 @@ class Probe:
         if isinstance(self.video_bitrates(), int):
             return int(self.video_bitrates())
         elif isinstance(self.video_bitrates(), dict):
-            return sum(value for key, value in dict(self.video_bitrates()))
+            return sum(value for value in dict(self.video_bitrates()).values())
 
 
 if __name__ == "__main__":
