@@ -17,7 +17,7 @@ run_test:
 run_coverage:
 	@make check_integrity
 	@pip install -e .
-	@coverage run --omit "test/*,src/metia/__init__.py,src/metia/encoders.py,src/metia/utils.py,src/metia/formats.py" -m pytest && coverage report
+	@coverage run --omit "test/*,src/metia/__init__.py,src/metia/encoders.py,src/metia/utils.py,src/metia/formats.py,src/metia/ext_programs.py" -m pytest && coverage report
 
 check_integrity:
 	@md5sum --check test/media_files/*.md5

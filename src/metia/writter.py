@@ -5,8 +5,7 @@ import shutil
 from typing import Dict, Optional, Union
 
 from . import probe
-
-FFMPEG_COMMAND = "ffmpeg"
+from .ext_programs import FFMPEG_COMMAND
 
 
 class Media:

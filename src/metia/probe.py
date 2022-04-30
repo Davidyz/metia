@@ -2,9 +2,7 @@ import os
 import json
 import subprocess
 from typing import Dict, Union, Optional
-
-
-FFPROBE_COMMAND: str = "ffprobe"
+from .ext_programs import FFPROBE_COMMAND
 
 
 class Probe:
@@ -93,7 +91,7 @@ class Probe:
                 codecs[stream["index"]] = stream["codec_name"]
         return codecs
 
-    def audio_bitrates(self) -> Union[Optional[int], Dict[int, str]]:
+    def audio_bitrates(self) -> Dict[int, int]:
         """
         Return a dictionary of audio bitrates.
         key: index of stream
@@ -107,8 +105,6 @@ class Probe:
                 except KeyError:
                     continue
 
-        if bitrates == {} and self.video_codec() != {}:
-            return self.__bitrate()
         return bitrates
 
     def video_bitrates(self) -> Dict[int, int]:
@@ -124,12 +120,7 @@ class Probe:
                     bitrates[stream["index"]] = int(stream["bit_rate"])
                 except KeyError:
                     continue
-        if (
-            bitrates == {}
-            and self.video_codec() != {}
-            and isinstance(self.__bitrate(), int)
-        ):
-            return {0: self.__bitrate()}
+
         return bitrates
 
     def __bitrate(self) -> Optional[int]:
@@ -143,10 +134,21 @@ class Probe:
         """
         Return the sum of the bitrates of all video streams.
         """
-        if isinstance(self.video_bitrates(), int):
-            return int(self.video_bitrates())
-        elif isinstance(self.video_bitrates(), dict):
-            return sum(value for value in dict(self.video_bitrates()).values())
+        return (
+            sum(self.video_bitrates().values())
+            if len(self.video_bitrates())
+            else 0
+        )
+
+    def audio_bitrate_sum(self) -> Optional[int]:
+        """
+        Return the sum of the bitrates of all video streams.
+        """
+        return (
+            sum(self.audio_bitrates().values())
+            if len(self.audio_bitrates())
+            else 0
+        )
 
 
 if __name__ == "__main__":

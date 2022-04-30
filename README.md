@@ -8,7 +8,7 @@ This library is developed under Python 3.8.
 ## Installation
 
 ```bash
-pip install metia
+pip install -U metia
 ```
 
 ## Dependency
@@ -22,7 +22,7 @@ corresponding codec that the media is using. To set a custom build of
 `ffmpeg`/`ffprobe`, set the variables `metia.probe.FFPROBE_COMMAND` and/or
 `metia.writter.FFMPEG_COMMAND`.
 
-### `metia.probe.Probe`
+### `metia.Probe`
 
 If all you want to do is to read the metadata, use this class. This provides a
 wrapper of `ffprobe` to extract commonly-used media metadata, such as bit-rate
@@ -30,7 +30,7 @@ and codec.
 
 Some methods of this class may be helpful to video files too.
 
-### `metia.writter.Media`
+### `metia.Media`
 
 > > WORK IN PROGRESS
 
