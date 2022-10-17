@@ -126,7 +126,7 @@ class Media:
             value = self.get_tags().get(key.upper())
             if isinstance(value, str):
                 command += ' -metadata {key}="{value}" '.format(
-                    key=key, value=value.replace(" ", "\\ ")
+                    key=key, value=value
                 )
 
         random_name = str(uuid.uuid4()) + "." + self.__suffix

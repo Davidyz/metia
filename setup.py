@@ -15,7 +15,7 @@ if os.path.isfile("requirements"):
 
 setuptools.setup(
     name="metia",
-    version="0.3.4",
+    version="0.3.5",
     author="David Yu",
     author_email="hzjlyz@gmail.com",
     description="A tool to parse and extract audio metadata.",
